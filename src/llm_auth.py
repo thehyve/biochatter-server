@@ -23,7 +23,11 @@ def _parse_api_key(bearToken: str) -> str:
     return bearToken
 
 def llm_get_auth_type(client_key: Optional[str]=None) -> AuthTypeEnum:
+    # If client_key is provided, check if we are in Azure mode
     if client_key is not None and len(client_key.strip()) > 0:
+        if os.environ.get("OPENAI_API_TYPE", "") == "azure":
+            # Optionally, you could add a ClientAzureOpenAI type if you want to distinguish
+            return AuthTypeEnum.ServerAzureOpenAI
         return AuthTypeEnum.ClientOpenAI
     
     if os.environ.get("OPENAI_API_TYPE", "") == "azure":
